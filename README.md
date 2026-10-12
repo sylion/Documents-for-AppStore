@@ -10,6 +10,8 @@ Feel free to add description in your language or to fix typos.
 To add a description in another language, please translate the files in [metadata/en-US](metadata/en-US) as they are, and do not create your own description.
 Place the translated files in `metadata/<locale>/` using a [supported App Store Connect locale code](https://developer.apple.com/documentation/appstoreconnectapi/managing-metadata-in-your-app-by-using-locale-shortcodes).
 
+Screenshots are generated automatically, so localization maintainers do not need to create them. If you notice any problems with the existing screenshots, please open an issue instead of submitting a pull request.
+
 
 ## Structure
 
@@ -18,7 +20,7 @@ Place the translated files in `metadata/<locale>/` using a [supported App Store 
     - `keywords.txt`
     - `description.txt` (up to 4000 characters).
 - `screenshots/<locale>/`: App Store screenshots, ordered by their numbered filenames corresponding to the order in the store.
-- `scripts/`: The screenshot capture script, background, and demo files. See [screenshot documentation](scripts/README.md).
+- `scripts/`: The screenshot capture script, background, and demo files.
 
 Directory names use App Store Connect locale codes, such as `en-US`, `de-DE`, and `pt-BR`.
 
