@@ -22,6 +22,8 @@ Place the translated files in `metadata/<locale>/` using a [supported App Store 
 
 Directory names use App Store Connect locale codes, such as `en-US`, `de-DE`, and `pt-BR`.
 
+Release notes are maintained in `metadata/default/release_notes.txt` for English and `metadata/ja/release_notes.txt` for Japanese only. Since other languages use the default English version, you don't need to include a `release_notes.txt` file for other languages.
+
 
 ## Upload
 

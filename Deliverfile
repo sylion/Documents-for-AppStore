@@ -3,6 +3,7 @@ platform("osx")
 
 metadata_path("./metadata")
 screenshots_path("./screenshots")
+languages(["fr-FR", "nl-NL"])
 
 skip_binary_upload(true)
 skip_app_version_update(true)
