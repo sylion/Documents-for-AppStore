@@ -23,6 +23,18 @@ Place the translated files in `metadata/<locale>/` using a [supported App Store 
 Directory names use App Store Connect locale codes, such as `en-US`, `de-DE`, and `pt-BR`.
 
 
+## Upload
+
+Install [fastlane](https://docs.fastlane.tools/) and configure [App Store Connect API authentication](https://docs.fastlane.tools/app-store-connect-api/).
+Prepare an editable macOS version in App Store Connect, then run the following command from the repository root:
+
+```sh
+fastlane deliver --api_key_path /path/to/api-key.json
+```
+
+To upload only the text, add `--skip_screenshots` to the command.
+
+
 ## License
 
 The materials are distributed under the terms of the __Attribution 4.0 International (CC BY 4.0)__. See the bundled [LICENSE](LICENSE) for details.
