@@ -19,29 +19,30 @@ struct Language {
 
     var folderName: String
     var localeCode: String
+    var appStoreLocaleCode: String
 }
 
 
-/// All supported languages with their App Store folder names and locale codes.
+/// All supported languages with their display names, app locale codes, and App Store locale codes.
 let languages: [Language] = [
-    Language(folderName: "Chinese (Simplified)", localeCode: "zh-Hans"),
-    Language(folderName: "Chinese (Traditional)", localeCode: "zh-Hant"),
-    Language(folderName: "Czech", localeCode: "cs"),
-    Language(folderName: "Dutch", localeCode: "nl"),
-    Language(folderName: "English", localeCode: "en"),
-    Language(folderName: "English (UK)", localeCode: "en-GB"),
-    Language(folderName: "French", localeCode: "fr"),
-    Language(folderName: "German", localeCode: "de"),
-    Language(folderName: "Hindi", localeCode: "hi"),
-    Language(folderName: "Italian", localeCode: "it"),
-    Language(folderName: "Japanese", localeCode: "ja"),
-    Language(folderName: "Korean", localeCode: "ko"),
-    Language(folderName: "Polish", localeCode: "pl"),
-    Language(folderName: "Portuguese", localeCode: "pt"),
-    Language(folderName: "Russian", localeCode: "ru"),
-    Language(folderName: "Spanish", localeCode: "es"),
-    Language(folderName: "Turkish", localeCode: "tr"),
-    Language(folderName: "Ukrainian", localeCode: "uk"),
+    Language(folderName: "Chinese (Simplified)", localeCode: "zh-Hans", appStoreLocaleCode: "zh-Hans"),
+    Language(folderName: "Chinese (Traditional)", localeCode: "zh-Hant", appStoreLocaleCode: "zh-Hant"),
+    Language(folderName: "Czech", localeCode: "cs", appStoreLocaleCode: "cs"),
+    Language(folderName: "Dutch", localeCode: "nl", appStoreLocaleCode: "nl-NL"),
+    Language(folderName: "English", localeCode: "en", appStoreLocaleCode: "en-US"),
+    Language(folderName: "English (UK)", localeCode: "en-GB", appStoreLocaleCode: "en-GB"),
+    Language(folderName: "French", localeCode: "fr", appStoreLocaleCode: "fr-FR"),
+    Language(folderName: "German", localeCode: "de", appStoreLocaleCode: "de-DE"),
+    Language(folderName: "Hindi", localeCode: "hi", appStoreLocaleCode: "hi"),
+    Language(folderName: "Italian", localeCode: "it", appStoreLocaleCode: "it"),
+    Language(folderName: "Japanese", localeCode: "ja", appStoreLocaleCode: "ja"),
+    Language(folderName: "Korean", localeCode: "ko", appStoreLocaleCode: "ko"),
+    Language(folderName: "Polish", localeCode: "pl", appStoreLocaleCode: "pl"),
+    Language(folderName: "Portuguese", localeCode: "pt", appStoreLocaleCode: "pt-BR"),
+    Language(folderName: "Russian", localeCode: "ru", appStoreLocaleCode: "ru"),
+    Language(folderName: "Spanish", localeCode: "es", appStoreLocaleCode: "es-ES"),
+    Language(folderName: "Turkish", localeCode: "tr", appStoreLocaleCode: "tr"),
+    Language(folderName: "Ukrainian", localeCode: "uk", appStoreLocaleCode: "uk"),
 ]
 
 /// The CotEditor bundle identifier.
@@ -889,17 +890,18 @@ func captureFeatures(language: Language, projectDir: String, outputPath: String)
 // MARK: - Main
 
 let scriptDir = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent().path
-let screenshotsDir: String = if scriptDir.isEmpty || scriptDir == "." {
+let sourceDir: String = if scriptDir.isEmpty || scriptDir == "." {
     FileManager.default.currentDirectoryPath
 } else {
     scriptDir
 }
-let backgroundPath = screenshotsDir + "/background@2x.png"
+let screenshotsDir = URL(fileURLWithPath: sourceDir).deletingLastPathComponent().appendingPathComponent("screenshots", isDirectory: true).path
+let backgroundPath = sourceDir + "/background@2x.png"
 
 // Verify the background image exists.
 guard FileManager.default.fileExists(atPath: backgroundPath) else {
     print("Error: Background image not found at \(backgroundPath)")
-    print("Run this script from the Screenshots directory.")
+    print("Check the screenshot source files in \(sourceDir).")
     exit(1)
 }
 
@@ -914,6 +916,9 @@ if args.isEmpty {
             return lang
         }
         if let lang = languages.first(where: { $0.localeCode == arg }) {
+            return lang
+        }
+        if let lang = languages.first(where: { $0.appStoreLocaleCode == arg }) {
             return lang
         }
         print("Warning: Unknown language '\(arg)'. Skipping.")
@@ -979,10 +984,10 @@ signal(SIGINT) { _ in
     exit(1)
 }
 
-let demoFileVertical = screenshotsDir + "/_demo files/銀河鉄道の夜.md"
-let demoFileEditor = screenshotsDir + "/_demo files/editor.svg"
-let demoFileSvg = screenshotsDir + "/_demo files/svg.svg"
-let projectDir = screenshotsDir + "/../../CotEditor"
+let demoFileVertical = sourceDir + "/_demo files/銀河鉄道の夜.md"
+let demoFileEditor = sourceDir + "/_demo files/editor.svg"
+let demoFileSvg = sourceDir + "/_demo files/svg.svg"
+let projectDir = sourceDir + "/../../CotEditor"
 
 do {
     print("Saving CotEditor defaults...")
@@ -1001,17 +1006,17 @@ do {
     for (index, language) in targetLanguages.enumerated() {
         print("[\(index + 1)/\(targetLanguages.count)] \(language.folderName) (\(language.localeCode))")
 
-        let outputDir = screenshotsDir + "/" + language.folderName
+        let outputDir = screenshotsDir + "/" + language.appStoreLocaleCode
         guard FileManager.default.fileExists(atPath: outputDir) else {
             print("  Skipping: directory not found")
             continue
         }
 
-        try captureSettings(language: language, outputPath: outputDir + "/Settings@2x.png")
-        try captureVerticalOrientation(language: language, demoFile: demoFileVertical, outputPath: outputDir + "/VerticalOrientation@2x.png")
-        try captureEditor(language: language, demoFile: demoFileEditor, outputPath: outputDir + "/Editor@2x.png")
-        try captureDark(language: language, demoFileFront: demoFileEditor, demoFileBack: demoFileSvg, outputPath: outputDir + "/Dark@2x.png")
-        try captureFeatures(language: language, projectDir: projectDir, outputPath: outputDir + "/Features@2x.png")
+        try captureSettings(language: language, outputPath: outputDir + "/03_Settings.png")
+        try captureVerticalOrientation(language: language, demoFile: demoFileVertical, outputPath: outputDir + "/05_VerticalOrientation.png")
+        try captureEditor(language: language, demoFile: demoFileEditor, outputPath: outputDir + "/01_Editor.png")
+        try captureDark(language: language, demoFileFront: demoFileEditor, demoFileBack: demoFileSvg, outputPath: outputDir + "/04_Dark.png")
+        try captureFeatures(language: language, projectDir: projectDir, outputPath: outputDir + "/02_Features.png")
     }
 
     print("")
